@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>流域水文模型配置平台</title>
+    <meta name="description" content="流域水文模型配置平台" />
+    <meta charset="UTF-8">
+    <script src="js/go.js"></script>
+    <script src="../js/index.js"></script>
+  </head>
+<body>
+    <div id="sample" style="width: 100%; margin: 0 auto;" >
+        <div style="width: 100%; display: flex; justify-content: space-between">
+            <div id="myPaletteDiv" style="width: 200px; margin-right: 2px; background-color: whitesmoke; border: solid 1px black"></div>
+            <div id="myDiagramDiv" style="flex-grow: 1; height: 600px; border: solid 1px black"></div>
+        </div>
+        <button id="saveButton">保存</button>
+        <button id="loadButton">加载</button>
+        图模型保存为JSon格式:
+        <textarea id="mySavedModel" style="width:100%;height:200px">
+        </textarea>
+        <button id="printButton">用SVG打印</button>
+    </div>
+</body>
+</html>

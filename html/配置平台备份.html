@@ -1,0 +1,490 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>流域水文模型配置平台</title>
+
+    <style>#myDiagramDiv {
+        background-color: #F8F8F8;
+        border: 1px solid #aaa;
+    }</style>
+    <link rel="stylesheet" type="text/css" href="../css/sty1.css" />
+
+    <script src="../js/go_debug.js"></script>
+    <script src="../js/Robot.js"></script>
+    <script src="../js/jquery-3.6.0.js"></script>
+
+
+</head>
+<body>
+
+<div id="container" style="width: 100%; display: flex; justify-content: space-between">
+    <div id="myPaletteDiv" style="width: 80px; height: 600px; margin-right: 2px; border: 1px solid black; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0); cursor: auto;">
+        <canvas tabindex="0" width="117" height="597" style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; width: 78px; height: 398px; cursor: auto;">
+            This text is displayed if your browser does not support the Canvas HTML element.
+        </canvas>
+        <div style="position: absolute; overflow: auto; width: 78px; height: 398px; z-index: 1;">
+            <div style="position: absolute; width: 1px; height: 1px;"></div>
+        </div>
+    </div>
+    <div id="myDiagramDiv" style="flex-grow: 1; height: 600px; border: 1px solid black; position: relative; -webkit-tap-highlight-color: rgba(255, 255, 255, 0); cursor: auto;">
+        <canvas tabindex="0" width="1233" height="597" style="position: absolute; top: 0px; left: 0px; z-index: 2; user-select: none; width: 822px; height: 398px; cursor: auto;">
+            This text is displayed if your browser does not support the Canvas HTML element.
+        </canvas>
+        <div style="position: absolute; overflow: auto; width: 822px; height: 398px; z-index: 1;">
+            <div style="position: absolute; width: 1px; height: 1px;">
+
+            </div>
+        </div>
+    </div>
+    <div id="nodeDetail"  style="display: none; width:200px; margin-right: 2px; background-color: whitesmoke; border: solid 1px black;padding:10px">
+        <p style="text-align: left" id="menu1"><label for="showId">水利对象编码：</label><input type="text" id="showId" placeholder="待输入" /></p>
+        <p style="text-align: left" id="menu2"><label for="showFrom">上游水利对象编码：</label><input type="text" id="showFrom" placeholder="待输入" readonly="" /></p>
+        <p style="text-align: left" id="menu3"><label for="showTo">下游水利对象编码：</label><input type="text" id="showTo" placeholder="待输入" readonly="" /></p>
+
+        <p style="text-align: left; " id="menuObj">
+            水利对象类型：
+            <br>
+            <label for="river">河流</label>
+            <input type="radio" name="inputObjType" id="river" value="1"/>
+            <br>
+            <label for="station">测站</label>
+            <input type="radio" name="inputObjType" id="station" value="2"/>
+            <br>
+            <label for="basin">子流域</label>
+            <input type="radio" name="inputObjType" id="basin" value="3"/>
+            <br>
+        </p>
+
+        <p style="text-align: left; " id="menuStation">
+            <label for="selectStation">测站类型:</label>
+            <select id="selectStation" placeholder="待上游对象输入" >
+                <option>雨量站</option>
+                <option>水电站</option>
+                <option>水文站</option>
+            </select>
+        </p>
+
+
+        <button style="display: block" id="propertySaveButton" onclick="propertySave()">匹配数据</button>
+        <button style="display: block" id="testBTN" onclick="coming()">test</button>
+    </div>
+    <div id="Info" style="display:none; width:200px; margin-right: 2px; background-color: whitesmoke; border: solid 1px black;padding:10px;">
+        <p style="text-align: left"><label for="infoId">水利对象唯一编码：</label><input type="text" id="infoId" readonly="readonly" /></p>
+
+        <p style="text-align: left"><label for="infoName">水利对象名称：</label><input type="text" id="infoName"/></p>
+
+        <p style="text-align: left"><label for="infoType">水利对象类型：</label><input type="text" id="infoType" readonly="readonly"/></p>
+
+        <p style="display:none; text-align: left" class="infoRiver"><label for="infoLengh">长度：</label><input type="text" id="infoLengh"/></p>
+
+        <p style="display:none; text-align: left" class="infoRiver"><label for="infoAnnualRunoff">年径流量：</label><input type="text" id="infoAnnualRunoff"/></p>
+
+        <p style="display:none; text-align: left" class="infoStation"><label for="infoStationLocation">位置：</label><input type="text" id="infoStationLocation"/></p>
+
+        <p style="display:none; text-align: left" class="infoStation"><label for="infoBelongAdm">所属行政：</label><input type="text" id="infoBelongAdm"/></p>
+
+        <p style="display:none; text-align: left" class="infoStation"><label for="infoSite">站址：</label><input type="text" id="infoSite"/></p>
+
+        <p style="display:none; text-align: left" class="infoBasin"><label for="infoArea">控制面积：</label><input type="text" id="infoArea"/></p>
+
+        <p style="display:none; text-align: left" class="infoBasin"><label for="infoRainfall">年平均降雨量：</label><input type="text" id="infoRainfall"/></p>
+    </div>
+    <div id="list1" style="display:none; width:200px; margin-right: 2px; background-color: whitesmoke; border: solid 1px black;padding:10px;">
+
+        <div id="box">点击</div>
+        <div id="down">
+            <ul class="phones">
+                <li>para1</li>
+                <li>para2</li>
+                <li>para3</li>
+                <li>para4</li>
+                <li>para5</li>
+                <li>para6</li>
+            </ul>
+        </div>
+
+
+    </div>
+</div>
+<p>已建流域模型
+    <br><button onclick="test()">白龙江流域</button>
+    <br><button onclick="test()">白水江流域</button>
+    <br><button onclick="test()">岷江流域</button>
+    <br>
+</p>
+<p><a>当前对象</a></p>
+<div id="myStatus" style="color:green"></div>
+<br><br>
+<div id="buttons">
+    <button id="saveModel" onclick="save()">序列化</button>
+    <button id="loadModel" onclick="load()">反序列化</button> 序列化数据如下:
+</div>
+<textarea id="mySavedModel" style="width:100%;height:300px" readonly>
+
+	</textarea>
+
+
+<!--<script src="js/myJS1.js"></script>-->
+
+<script>//脚本
+
+
+var robot;  // this global variable will hold an instance of the Robot class for myDiagram
+function init() {
+    if (window.goSamples) goSamples();  // init for these samples -- you don't need to call this
+    var $ = go.GraphObject.make;  // for conciseness in defining templates
+
+    function nodeClicked(e, obj) {  // executed by click and doubleclick handlers
+        var evt = e.copy();
+        var nodeOrLink = obj.part;
+        var type = evt.clickCount === 2 ? "Double-Clicked: " : "Clicked: ";
+        // var msg =  nodeOrLink.data.id + ". ";
+        // document.getElementById("myStatus").textContent = msg;
+
+        document.getElementById("Info").style.display = "none";
+        document.getElementById("list1").style.display = "none";
+        document.getElementById("nodeDetail").style.display = "block";
+        document.getElementById("menuStation").style.display = "block";
+        document.getElementById("showId").value = "";
+        document.getElementById("showFrom").value = "";
+        document.getElementById("showTo").value = "";
+        document.getElementById("menu2").style.display = "block";
+        document.getElementById("menu3").style.display = "block";
+
+
+        if(nodeOrLink.data.id){//获取id
+            document.getElementById("showId").value = nodeOrLink.data.id;
+        }else {
+            document.getElementById("showId").placeholder="待输入";
+        }
+
+        if(nodeOrLink instanceof go.Link){//连线
+            document.getElementById("menuStation").style.display = "none";
+            if(nodeOrLink.fromNode.id){//获取id
+                document.getElementById("showFrom").value = nodeOrLink.fromNode.id;
+            }else {
+                document.getElementById("showFrom").placeholder="待上游对象输入";
+            }
+
+            if(nodeOrLink.toNode.id){//获取id
+                document.getElementById("showTo").value = nodeOrLink.toNode.id;
+            }else {
+                document.getElementById("showTo").placeholder="待下游对象输入";
+            }
+        }else if(nodeOrLink instanceof go.Node){//节点
+            // document.getElementById("showFrom").value = nodeOrLink.findNodesInto().id;
+            // document.getElementById("showTo").value = nodeOrLink.findNodesOutOf().id;
+            document.getElementById("menuStation").style.display = "block";
+            document.getElementById("menu2").style.display = "none";
+            document.getElementById("menu3").style.display = "none";
+        }
+        // document.getElementById("showFrom").value = node.fromNode.id;
+        // document.getElementById("showTo").value = node.toNode.id;
+
+    }
+
+    myDiagram =
+        $(go.Diagram, "myDiagramDiv",  // must name or refer to the DIV HTML element
+            {
+                "toolManager.mouseWheelBehavior":go.ToolManager.WheelNone,
+                nodeTemplate:
+                    $(go.Node, "Vertical",
+                        {
+                            contextClick: nodeClicked,
+                            click: nodeClicked,
+                            doubleClick: nodeClicked,
+                            contextMenu:
+                                $("ContextMenu",//直接设定的默认右键菜单
+                                    $("ContextMenuButton",
+                                        $(go.TextBlock, "匹配数据"),
+                                        { click: propertySave }),
+                                    $("ContextMenuButton",
+                                        $(go.TextBlock, "基本信息"),
+                                        { click: info }),
+                                    // $("ContextMenuButton",
+                                    //     $(go.TextBlock, "模型管理"),
+                                    //     { click: showlist1 }),
+                                    $("ContextMenuButton",
+                                        $(go.TextBlock, "模型计算"),
+                                        { click: test }),
+                                    $("ContextMenuButton",
+                                        $(go.TextBlock, "删除"),
+                                        { click: menuDelete }),
+                                )
+                        },
+                        new go.Binding("id"),
+                        new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),//尝试坐标
+                        $(go.Panel,"Auto",
+                            $(go.Shape, "Rectangle",
+                                { fill: "lightgray" },
+                                { portId: "", fromLinkable: true, fromLinkableSelfNode: true, fromLinkableDuplicates: true,
+                                    toLinkable: true, toLinkableSelfNode: true, toLinkableDuplicates: true,
+                                    cursor: "pointer" }),
+
+                            $(go.Picture,{
+                                    // fromLinkable: true, toLinkable: true, cursor: "pointer",portId: "",
+                                    margin:10,
+                                    width:50,
+                                    height:50,
+                                },
+                                new go.Binding("source")
+                            ),
+                        ),
+
+
+                        $(go.Panel, "Auto",
+                            $(go.TextBlock, "",  // the label text
+                                {
+                                    margin: 2,
+                                    opacity:1,
+                                },
+                                // editing the text automatically updates the model data
+                                new go.Binding("text","id").makeTwoWay(),
+                            ),
+                        ),
+
+                        // $(go.TextBlock, "",  // 默认文本
+                        // 		{
+                        // 			segmentOffset: new go.Point(1000, 1000)//无效
+                        // 		},
+                        // 		// editing the text automatically updates the model data
+                        // 		new go.Binding("text","id").makeTwoWay(),
+                        // ),
+                    ),
+                model: new go.GraphLinksModel([
+                        { key: "2", source:"img/HydropowerStation.png", "loc":"-100 -150", id:"b1"},
+                        { key: "4", source:"img/Reservoir.png", "loc":"-15 -20", id:"d1"},
+                        { key: "3", source:"img/RainfallStation.png", "loc":"70 -200", id:"c1"},
+                    ],
+                    [
+                        { from: "2", to: "4" ,id:"L1"},
+                        { from: "3", to: "4" ,id:"L2"}
+                    ]),
+                "undoManager.isEnabled": true
+            });
+    myDiagram.linkTemplate =//连线模板
+        $(go.Link,
+            {
+                routing: go.Link.AvoidsNodes,
+                contextClick: nodeClicked,
+                click: nodeClicked,
+                doubleClick: nodeClicked,
+                contextMenu:
+                    $("ContextMenu",//直接设定的默认右键菜单
+                        $("ContextMenuButton",
+                            $(go.TextBlock, "匹配数据"),
+                            { click: propertySave }),
+                        $("ContextMenuButton",
+                            $(go.TextBlock, "基本信息"),
+                            { click: info }),
+                        // $("ContextMenuButton",
+                        //     $(go.TextBlock, "模型管理"),
+                        //     { click: showlist1 }),
+                        $("ContextMenuButton",
+                            $(go.TextBlock, "模型计算"),
+                            { click: test }),
+                        $("ContextMenuButton",
+                            $(go.TextBlock, "删除"),
+                            { click: menuDelete }),
+                    ),
+
+            },  // 连线绕开节点
+
+            $(go.Shape, {
+                    strokeWidth: 5, //节点连线宽度
+                    stroke: "#57CFE3" //节点连线颜色
+                },
+                new go.Binding("stroke", "color")),
+            $(go.Shape, {
+                toArrow: "Standard", //箭头
+                scale: 2, //箭头放大倍数
+                fill: "#57CFE3", //箭头填充色
+                stroke: null
+            }),
+            new go.Binding("id"),//控制台警告
+
+            // $(go.Panel, "Auto",
+            // 		$(go.TextBlock, "",  // the label text
+            // 				{
+            // 					segmentOffset: new go.Point(0, -120)
+            // 				},
+            // 				// editing the text automatically updates the model data
+            // 				new go.Binding("text","id").makeTwoWay(),
+            // 		)
+            // ),
+
+            $(go.TextBlock, "",  // the label text
+                {
+                    segmentOffset: new go.Point(0, -12)
+                },
+                // editing the text automatically updates the model data
+                new go.Binding("text","id").makeTwoWay(),
+            ),
+
+        );
+
+    // a shared Robot that can be used by all commands for this one Diagram
+    robot = new Robot(myDiagram);  // defined in Robot.js
+    // initialize the Palette that is on the left side of the page
+    myPalette =//左侧模板栏
+        $(go.Palette, "myPaletteDiv",  // must name or refer to the DIV HTML element
+            {
+                nodeTemplate: myDiagram.nodeTemplate,
+                model: new go.GraphLinksModel([  // specify the contents of the Palette
+                    { key: "1", source:"img/HydrologicalStation.png" },
+                    { key: "2", source:"img/HydropowerStation.png" },
+                    { key: "3", source:"img/RainfallStation.png" },
+                    { key: "4", source:"img/Reservoir.png" }
+                ])
+            });
+
+    myDiagram.addDiagramListener("BackgroundSingleClicked", function(e) {
+        document.getElementById("nodeDetail").style.display = "none";
+    })
+
+}
+
+// function copyNode() {
+// 	var alpha = myDiagram.findNodeForKey("logical");
+// 	if (alpha === null) return;
+// 	var loc = alpha.actualBounds.center;
+// 	var options = { control: true, alt: true };
+// 	// Simulate a mouse drag to move the Alpha node:
+// 	robot.mouseDown(loc.x, loc.y, 0, options);
+// 	robot.mouseMove(loc.x + 80, loc.y + 50, 50, options);
+// 	robot.mouseMove(loc.x + 20, loc.y + 100, 100, options);
+// 	robot.mouseUp(loc.x + 20, loc.y + 100, 150, options);
+// 	// If successful, will have made a copy of the "Alpha" node below it.
+// 	// Alternatively you could copy the Node using commands:
+// 	// myDiagram.commandHandler.copySelection();
+// 	// myDiagram.commandHandler.pasteSelection(new go.Point(loc.x+20, loc.y+100));
+// }
+
+function deleteSelection() {
+    // 模拟按Delete按键
+    robot.keyDown("Del");
+    robot.keyUp("Del");
+
+    // Alternatively you could invoke the Delete command directly:
+    // myDiagram.commandHandler.deleteSelection();
+}
+function menuDelete(){
+    if (myDiagram.commandHandler.canDeleteSelection()) {
+        myDiagram.commandHandler.deleteSelection();
+        return;
+    }
+}
+
+
+
+function propertySave() {
+    // var node = myDiagram.model.findNodeDataForKey('2');
+    // myDiagram.model.setDataProperty(node, 'id', "46");
+    // var node=myDiagram.selection.first();
+    // myDiagram.model.setDataProperty(node.data, 'id', "46");
+    // console.log(node.data.key);
+
+    var node=myDiagram.selection.first();//获取选中节点或连线
+    if(node instanceof go.Node){//尝试获取修改属性
+        var id=document.getElementById("showId").value;
+        myDiagram.model.setDataProperty(node.data, "id", id);
+    }else if(node instanceof go.Link){//获取选中的连线
+        // var from=document.getElementById("showFrom").value;
+        // var to=document.getElementById("showTo").value;
+        id = document.getElementById("showId").value;
+        myDiagram.model.setDataProperty(node.data, "id", id);
+    }
+}
+
+
+
+function info(){//基本信息功能
+    var obj=myDiagram.selection.first();
+
+    if(obj instanceof go.Link){//连线
+        var elements1,elements2,elements3
+
+        document.getElementById("nodeDetail").style.display = "none"
+        document.getElementById("Info").style.display = "block"
+
+        elements1 = document.getElementsByClassName("infoRiver");
+        Array.prototype.forEach.call(elements1, function (element) {
+            element.style.display = "block";
+        });
+        elements2 = document.getElementsByClassName("infoStation");
+        Array.prototype.forEach.call(elements2, function (element) {
+            element.style.display = "none";
+        });
+        elements3 = document.getElementsByClassName("infoBasin");
+        Array.prototype.forEach.call(elements3, function (element) {
+            element.style.display = "none";
+        });
+
+        document.getElementById("infoId").value=document.getElementById("showId").value;
+
+        var checked = $("input[name='inputObjType']:checked").val();
+        if(checked==="1"){
+            document.getElementById("infoType").value="河流";
+        }else if(checked==="2"){
+            document.getElementById("infoType").value="测站";
+        }else if(checked==="3"){
+            document.getElementById("infoType").value="子流域";
+        }
+
+    }
+    else if(obj instanceof go.Node){//节点
+        document.getElementById("nodeDetail").style.display = "none"
+        document.getElementById("Info").style.display = "block"
+
+        elements1 = document.getElementsByClassName("infoRiver");
+        Array.prototype.forEach.call(elements1, function (element) {
+            element.style.display = "none";
+        });
+        elements2 = document.getElementsByClassName("infoStation");
+        Array.prototype.forEach.call(elements2, function (element) {
+            element.style.display = "block";
+        });
+        elements3 = document.getElementsByClassName("infoBasin");
+        Array.prototype.forEach.call(elements3, function (element) {
+            element.style.display = "none";
+        });
+
+        document.getElementById("infoId").value=document.getElementById("showId").value;
+        checked = $("input[name='inputObjType']:checked").val();
+        if(checked==="1"){
+            document.getElementById("infoType").value="河流";
+        }else if(checked==="2"){
+            document.getElementById("infoType").value="测站";
+        }else if(checked==="3"){
+            document.getElementById("infoType").value="子流域";
+        }
+    }
+
+}
+function test(){
+    window.alert("敬请期待")
+}
+
+function coming(){
+
+}
+
+
+function save() {
+    document.getElementById("mySavedModel").value = myDiagram.model.toJson();
+    myDiagram.isModified = false;
+}
+function load() {
+    myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+}
+
+
+
+if(window.init) {init();}
+</script>
+</body>
+</html>

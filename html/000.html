@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    #box{
+      color: aliceblue;
+      width: 110px;
+      height: 25px;
+      border: 1px solid #c5c5c5;
+      border-radius: 10px;
+      background-color: #797777;
+      text-align: center;
+      /* text-indent: 5px; */
+      font-size: 14px;
+      line-height: 25px;
+      cursor: pointer;
+    }
+    #down{
+      border: 1px solid #c5c5c5;
+      width: 90px;
+      margin-left: 5px;
+      display: none;
+    }
+    ul{
+      padding: 0;
+      margin: 0;
+    }
+    li{
+      list-style: none;
+      font-size: 14px;
+      border-bottom: 1px dashed #c5c5c5;
+      text-align: center;
+      height: 25px;
+      line-height: 25px;
+      color: aliceblue;
+      background-color: #333;
+      cursor: pointer;
+    }
+    li:hover{
+      background-color: #5c0e0e;
+    }
+  </style>
+</head>
+
+<body>
+<div id="box">请选择手机名称</div>
+<div id="down">
+  <ul class="phones">
+    <li>华为</li>
+    <li>小米</li>
+    <li>oppo</li>
+    <li>vivo</li>
+    <li>爱疯</li>
+    <li>三星</li>
+  </ul>
+</div>
+</body>
+</html>
+
+<script>
+  var obox = document.getElementById("box");
+  var odown = document.getElementById("down");
+  var oli = document.querySelectorAll("li");
+  console.log(oli);
+  var timer;
+  //当点击obox时，呈现出下拉列表的内容，给个延时效果
+  obox.onclick = function(){
+    clearInterval(timer);
+    timer = setInterval(function(){
+      odown.style.display = "block";
+    },300)
+    ///选中列表中的某一项并将其呈现在box中,隐藏下拉列表
+    for(var i=0;i<oli.length;i++){
+      oli[i].n = i;
+      oli[i].onclick = function(){
+        obox.innerHTML = this.innerHTML;
+        odown.style.display = "none";
+        clearInterval(timer);
+      }
+    }
+  }
+</script>
